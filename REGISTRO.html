@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - OZAN</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo"><b><i>OZAN</i></div></b>
+    <nav class="nav">
+      <a href="index.html">Inicio</a>
+      <a href="Catalogo.html">Catálogo</a>
+      <a href="contact.html">Contactos</a>
+      <a href="REGISTRO.html">Registra tu compra</a>
+      <a href="ACCESO RESTRINDIDO.html">Propietario</a>
+    </nav>
+  </header>
+
+  <section style="padding:2rem;">
+    <div style="max-width:600px; margin:auto; background:#fff; padding:2rem; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+      <h2 style="text-align:center; margin-bottom:1rem;">Registra tu compra</h2>
+
+      <form id="registration-form">
+        <label>Nombre Completo
+          <input type="text" id="nombre" required style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <label>Dirección de Envío
+          <input type="text" id="direccion" required style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <label>Información de Pago
+          <input type="text" id="pago" required style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <label>Teléfono
+          <input type="tel" id="telefono" pattern="[0-9]*" style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <label>Producto que deseas adquirir
+          <input type="text" id="producto" required style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <label>Cantidad a Transferir
+          <input type="number" id="cantidad-transferir" required style="width:100%; padding:0.6rem; margin-bottom:1rem;">
+        </label>
+        <button type="submit" class="buy-btn" style="width:100%;">Registrar</button>
+      </form>
+
+      <div id="confirmation-message" style="margin-top:1rem; display:none;"></div>
+
+      <div style="margin-top:1rem;">
+        <h5>Puedes realizar tu depósito a través de:</h5>
+        <p>Billetera móvil: <u>81919397</u></p>
+        <p>Cuenta LAFISE: <u>130248412</u></p>
+      </div>
+
+      <ul>
+        <li class="contact-item">
+          <strong>Billetera Móvil Banpro</strong>
+          <a href="banprowallet://transfer" target="_blank" rel="noopener">
+            📲 Abrir app Banpro
+          </a>
+         
+        </li>
+        <li class="contact-item">
+          <strong>Banca en línea</strong>
+          <a href="https://secure.bancolafise.com.ni/" target="_blank" rel="noopener">
+            🏦 Accede a tu banca en línea
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!--<div class="transfer-section" style="max-width:600px; margin:1rem auto;">
+      <div id="transfer-instructions" style="margin-top:1rem; display:none;">
+        <p><strong>Billetera móvil: 81919397</strong></p>
+        
+      </div>
+      <button id="btn-confirm-transfer" style="margin-top:1rem; display:none;">Confirmar Transferencia</button>
+      <div id="transfer-status" aria-live="polite" style="margin-top:1rem; font-weight:bold;"></div>
+    </div> -->
+
+    <p style="text-align:center; margin-top:1rem;"><a href="index.html">← Volver a Inicio</a></p>
+  </section>
+
+  <script>
+    document.getElementById('registration-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const u = {
+        nombre: document.getElementById('nombre').value,
+        direccion: document.getElementById('direccion').value,
+        pago: document.getElementById('pago').value,
+        telefono: document.getElementById('telefono').value,
+        producto: document.getElementById('producto').value,
+        cantidad: document.getElementById('cantidad-transferir').value,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('order_' + u.timestamp, JSON.stringify(u));
+
+      const cm = document.getElementById('confirmation-message');
+      cm.innerHTML = '<p style="color:green;">¡Información guardada correctamente!</p>';
+      cm.style.display = 'block';
+      this.reset();
+
+      // Mostrar instrucciones de transferencia
+      document.getElementById('transfer-instructions').style.display = 'block';
+      document.getElementById('btn-confirm-transfer').style.display = 'block';
+    });
+
+    document.getElementById('btn-confirm-transfer').addEventListener('click', async () => {
+      const amount = document.getElementById('cantidad-transferir').value;
+      const statusEl = document.getElementById('transfer-status');
+
+      try {
+        // Realiza la transferencia usando la API
+        const response = await fetch('URL_DE_LA_API_DE_TRANSFERENCIA', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer TU_TOKEN_DE_AUTENTICACION' // Si es necesario
+          },
+          body: JSON.stringify({ amount: amount, account: '83601255' }) // Ajusta según la API
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la transferencia');
+        }
+
+        const data = await response.json();
+        statusEl.textContent = `✔ Transferencia de C$ ${amount} completada.`;
+      } catch (error) {
+        statusEl.textContent = `❌ ${error.message}`;
+      }
+    });
+  </script>
+
+  <footer class="footer"><p>© 2025 OZAN. Todos los derechos reservados.</p></footer>
+</body>
+</html>
